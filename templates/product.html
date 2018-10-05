@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+</br>
+
+<div>
+<a href="../../" class="btn btn-primary active">
+        Back
+</a>
+</div>
+
+
+</br>
+
+<h2>Product NFC Readings</h2>
+
+</br>
+
+<div>
+<table class="table table-hover">
+         <thead>
+            <td>Longitude</td>
+            <td>Latitude</td>
+            <td>Scan Date</td>
+         </thead>
+         {% for reading in readings %}
+            <tr>
+               <td>{{reading['lon']}}</td>
+               <td>{{reading['lat']}}</td>
+               <td>{{reading['scan_date']}}</td>
+            </tr>
+          {% endfor %}
+      </table>
+</div>
+
+<div id="mapid" style="width: 600px; height: 400px;"></div>
+
+<script>
+	
+	var mymap = L.map('mapid');
+	var latlngs = {{ coords|safe }};
+
+	var i;
+	for (i = 0; i < latlngs.length; i++) {
+		L.marker(latlngs[i]).addTo(mymap)
+	}
+
+	var polyline = L.polyline(latlngs, {color: 'red'}).addTo(mymap);
+	mymap.fitBounds(polyline.getBounds());
+
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+
+</script>
+
+{% endblock %}

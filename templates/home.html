@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<h1>Shipping Information</h1>
+
+</br>
+
+
+<div class="text-center">
+	<h2 class="text-left">Products</h2>
+	<table class="table table-hover">
+         <thead>
+         	<td>Product ID</td>
+         	<td>Product Type</td>
+         	<td>Start Route</td>
+
+         </thead>
+         
+         {% for product in products %}
+            <tr>
+               <td><a href="product/{{product["product_id"]}}">{{product["product_id"]}}</a></td>
+               <td>{{product["product_type"]}}</td>
+               <td>{{product["start_route"]}}</td>
+               <form method="POST" action="">
+                  <td><button class="btn btn-danger btn-sm" name="delete_product" type="submit" value={{ product["product_id"] }}><i class="material-icons">delete</i></button></td>
+           	   </form>
+            </tr>
+         {% endfor %}
+
+         <form method="POST" action="">
+         <tr>
+            <td><input type="number" name="product_id" class="form-control-sm" value={{request.form.product_id}}></td>
+
+            <td><input type="text" name="product_type" class="form-control-sm" value={{request.form.product_type}}></td>
+
+            <td><input type="number" name="start_route" class="form-control-sm" value={{request.form.start_route}}></td>
+            <td><button class="btn btn-success btn-sm" name="submit_button" type="submit" value="Add Product"><i class="material-icons">add</i></button></td>
+         </tr>
+        </form>
+
+      </table>
+</div>
+
+<hr>
+</br>
+<div class="text-center">
+	<h2 class="text-left">Routes</h2>
+	<table class="table table-hover">
+         <thead>
+         	<td>Route ID</td>
+         	<td>Start</td>
+         	<td>End</td>
+         	<td>Next Route</td>
+
+         </thead>
+         
+         {% for route in routes %}
+            <tr>
+               <td><a href="plot/{{route["route_id"]}}">{{route["route_id"]}}</a></td>
+               <td>{{locations[route["src_id"] - 1]["location_name"]}}</td>
+               <td>{{locations[route["dest_id"] - 1]["location_name"]}}</td>
+               <td>{{route["next_route"]}}</td>
+               <form method="POST" action="">
+               <td><button class="btn btn-danger btn-sm" name="delete_route" type="submit" value={{route["route_id"]}}><i class="material-icons">delete</i></button></td>
+           </form>
+
+
+            </tr>
+         {% endfor %}
+
+    <form method="POST" action="">
+         <tr>
+            <td><input type="number" name="route_id" class="form-control-sm" value={{request.form.route_id}}></td>
+            <td><input type="text" name="src_id" class="form-control-sm" value={{request.form.src_id}}></td>
+            <td><input type="text" name="dest_id" class="form-control-sm" value={{request.form.dest_id}}></td>
+            <td><input type="number" name="next_route" class="form-control-sm" value={{request.form.next_route}}></td>
+            <td><button class="btn btn-success btn-sm" name="submit_button" type="submit" value="Add Route"><i class="material-icons">add</i></button></td>
+         </tr>
+        </form>
+
+
+      </table>
+
+
+</div>
+
+
+
+
+{% endblock %}
