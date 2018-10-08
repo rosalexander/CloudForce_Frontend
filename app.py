@@ -90,6 +90,19 @@ def product(id):
 def plot(id):
 
 	if request.method == 'POST':
+
+		if 'refresh_route' in request.form:
+
+			success = generate_iot_readings(id)
+			if success:
+				flash('Refreshed IoT readings', 'success')
+				return redirect(url_for('plot', id=id))
+			else:
+				flash('Refresh failed', 'danger')
+				return redirect(url_for('plot', id=id))
+
+
+
 		if 'delete_reading' in request.form:
 
 			rowid = request.form['delete_reading']
@@ -373,6 +386,17 @@ def get_location(name):
 		return cur.lastrowid
 
 	cur.close()
+
+@app.route('/generate_iot_readings/<int:id>')
+def generate_iot_readings(id):
+
+	try:
+		json_to_sql.add_readings_to_route(id)
+	except:
+		print("Cannot connect to database")
+
+	return "Success"
+
 
 
 

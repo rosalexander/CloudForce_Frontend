@@ -16,6 +16,8 @@ def add_readings_to_route(route_id):
 
 	iotJson = requests.get('http://132.145.129.245:5000/iot').json()
 
+	modified = False
+
 
 	for row in iotJson:
 
@@ -23,17 +25,17 @@ def add_readings_to_route(route_id):
 		date_unformatted = datetime.datetime.strptime(date_string, "%Y/%m/%d %H:%M:%S")
 		date_formatted = datetime.date.strftime(date_unformatted, "%Y-%m-%d %H:%M:%S")
 
-		cur.execute("SELECT EXISTS(SELECT 1 FROM readings WHERE create_date = ?)", (date_formatted, ))
+		cur.execute("SELECT EXISTS(SELECT 1 FROM readings WHERE route_id = ? AND create_date = ?)", (route_id, date_formatted, ))
 
 		id_exists = cur.fetchone()
-
+		print(id_exists[0])
 		if id_exists[0] != 1:
+			
 
 			
 			humidity = row['Humidity']
 			lux = row['Light']
 			temperature = row['Temperature']
-			
 			try:
 				humidity = int(humidity.split('.')[0])
 				lux = int(lux.split('.')[0])
@@ -43,10 +45,12 @@ def add_readings_to_route(route_id):
 				pass
 
 			cur.execute("INSERT INTO readings(route_id, temperature, humidity, lux, create_date) VALUES(?, ?, ?, ?, ?);", (route_id, temperature, humidity, lux, date_formatted))
+			modified = True
 
 	conn.commit()
 	cur.close()
 	conn.close()
+	return modified
 
 def add_nfc_to_product(product_id):
 	conn = sqlite3.connect(DATABASE)
@@ -84,8 +88,6 @@ def add_nfc_to_product(product_id):
 	conn.commit()
 	cur.close()
 	conn.close()
-
-
 
 
 
